@@ -130,7 +130,7 @@ def kill_av():
         logo_pos = None
         for attempt in range(3):
             try:
-                logo_pos = get_button_position(b64_AV_logo[AV], confidence=0.7)
+                logo_pos = get_button_position(b64_AV_logo[AV], confidence=0.65)
                 if logo_pos:
                     pyautogui.rightClick(logo_pos)
                     # 立即将鼠标移动到屏幕中心位置，避免悬停弹出版本信息
