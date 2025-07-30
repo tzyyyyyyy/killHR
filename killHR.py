@@ -70,7 +70,7 @@ def detect_theme(logout_img):
     return "light"
 
 
-def get_button_position(img_data, confidence=0.8, max_attempts=3):
+def get_button_position(img_data, confidence=0.65, max_attempts=3):
     """获取按钮位置（带智能重试机制）"""
     button_img = b64_to_image(img_data)
 
