@@ -49,7 +49,7 @@ def detect_theme(logout_img):
 
     # 尝试匹配浅色主题
     try:
-        pos = pyautogui.locateOnScreen(logout_img, confidence=0.75)
+        pos = pyautogui.locateOnScreen(logout_img, confidence=0.65)
         if pos:
             print("检测到浅色主题！！！")
             return "light"
@@ -59,7 +59,7 @@ def detect_theme(logout_img):
     # 尝试匹配深色主题
     try:
         dark_logout_img = b64_to_image(b64_hr_buttons["dark"]["logout"])
-        pos = pyautogui.locateOnScreen(dark_logout_img, confidence=0.75)
+        pos = pyautogui.locateOnScreen(dark_logout_img, confidence=0.65)
         if pos:
             print("检测到深色主题！！！")
             return "dark"
