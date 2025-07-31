@@ -6,12 +6,17 @@ import sys
 from io import BytesIO
 from time import sleep
 from PIL import Image
+import random
 
 
 # --------------Imagebase64--------------
 b64_AV_logo = {
-    "hr": b'iVBORw0KGgoAAAANSUhEUgAAABoAAAAeCAYAAAAy2w7YAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAPaSURBVEhLlZZdbAxRFMf/dxaLVneban1si25F2qoQQUTrIz4iIsGLRLQPmoiIEh488iBCPEhIePdCPAjeCAkRiQcPSGp9p6iqj6atLW3T3bVznXPn3tlaMzvrl5y9H3Pn/OfcOXvniFQqJYUQkFKCW8uykM1m1Zj71nAnxPfLEIM3ICYIIGQBtz8AGUCO0n2Nrcg2H4CILwdj27ZqjU/jR4yNjSkhJfLjAUQfORy6RU5pNS0A+f6HOx91ZxzsP03iYxNgN+6CvbQVaNzgigl5f5bE1Enk1MujD3c9hLyQZL/JvpN7V8Cm2WKNidY6bSHY9USyKSxEYf23MfueAy3HnH4RWGpvvZ66kDETS4C1J4GyGmccAAl5OAqyzRf17cTB4t6XI+S1Pb5GG7+sQ99OCMrMECVTAP8fUYtHBOtO644/9O/0cOZnLW+dCPJZ1KY7/uiIKCOCbM072iJKAC9KZuiOPyTEjvKePN/WdfmLFAltHf16OTe2/n2wyCBFG0DhZNhIh2cxkQx1A0f69MAb/3e0/kXx25WkqDPDBf9TlszakJR54w2x3UC4Si8J4OsTpw2FgchcYMEOZ5yH99YtuaAvBzBCx/I3LTRtttPuvOm0eVhZu9TZKmNT5uhLAaSGgPMznb4IOa2BoxtHZvIs+tZVH8hFwlZH4yBY5GxUD4jFe3RHs3S/7jgkVxyliBr20peRo3GERFmjvuxD5mdOpKKevqK7/o2opll3iBQdj6vaYEUiEfSVtrtCkh35Qdfkdf0umPbHlDRlejAOKgsMn+uPgzWsUCgEsfI47F9UJPA7+nJXL8kjMwR5jd4Jr2E66LTwEmF66QGI3z+jCG86pOoRVZxwldLT04Pa+wspGWiydVQtdMmmIK/m3onYmgDK6/TIgzNhyB8ZfNzfherqano2myoGHWYsFsObZkrVETqTJFcUOeSViLu1Yjv9kQuJ8Dcrmcab9pfKp6qAuMLiDsOD2ngdXrU8g30pruYY+exETmTLQ/q/5K55YZ+K4/WeV4jH444A13S8dVxA8gI1IOMwu7u7EaPabuqyw5CX9NezdC7EzsKH569759A3b5vaLhZg3LounU5Tq6tJEjJV6sDAAEYHP6Hu0WqA8kS00aEZLlc3e/HuxVOUlM9EVVWV8mH8Gd9KlgdsHI2JrKKiApU1DUiseor08HRfEUomdHZ2YkbNfHWP8cGwT/Pwbta5E3oRt7yQ5/r7+5FMJtHU1OReZxKJBKLRKCorK9VTq+zSvgw8pwR563iCB4y5wQiZOVqH3t5eNc/GD8BZFQ6H/9oJxghyy0gp8QdFk5DY4EXJzgAAAABJRU5ErkJggg=='
+    "hr": {
+        "normal": b'iVBORw0KGgoAAAANSUhEUgAAABoAAAAeCAYAAAAy2w7YAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAPaSURBVEhLlZZdbAxRFMf/dxaLVneban1si25F2qoQQUTrIz4iIsGLRLQPmoiIEh488iBCPEhIePdCPAjeCAkRiQcPSGp9p6iqj6atLW3T3bVznXPn3tlaMzvrl5y9H3Pn/OfcOXvniFQqJYUQkFKCW8uykM1m1Zj71nAnxPfLEIM3ICYIIGQBtz8AGUCO0n2Nrcg2H4CILwdj27ZqjU/jR4yNjSkhJfLjAUQfORy6RU5pNS0A+f6HOx91ZxzsP03iYxNgN+6CvbQVaNzgigl5f5bE1Enk1MujD3c9hLyQZL/JvpN7V8Cm2WKNidY6bSHY9USyKSxEYf23MfueAy3HnH4RWGpvvZ66kDETS4C1J4GyGmccAAl5OAqyzRf17cTB4t6XI+S1Pb5GG7+sQ99OCMrMECVTAP8fUYtHBOtO644/9O/0cOZnLW+dCPJZ1KY7/uiIKCOCbM072iJKAC9KZuiOPyTEjvKePN/WdfmLFAltHf16OTe2/n2wyCBFG0DhZNhIh2cxkQx1A0f69MAb/3e0/kXx25WkqDPDBf9TlszakJR54w2x3UC4Si8J4OsTpw2FgchcYMEOZ5yH99YtuaAvBzBCx/I3LTRtttPuvOm0eVhZu9TZKmNT5uhLAaSGgPMznb4IOa2BoxtHZvIs+tZVH8hFwlZH4yBY5GxUD4jFe3RHs3S/7jgkVxyliBr20peRo3GERFmjvuxD5mdOpKKevqK7/o2opll3iBQdj6vaYEUiEfSVtrtCkh35Qdfkdf0umPbHlDRlejAOKgsMn+uPgzWsUCgEsfI47F9UJPA7+nJXL8kjMwR5jd4Jr2E66LTwEmF66QGI3z+jCG86pOoRVZxwldLT04Pa+wspGWiydVQtdMmmIK/m3onYmgDK6/TIgzNhyB8ZfNzfherqano2myoGHWYsFsObZkrVETqTJFcUOeSViLu1Yjv9kQuJ8Dcrmcab9pfKp6qAuMLiDsOD2ngdXrU8g30pruYY+exETmTLQ/q/5K55YZ+K4/WeV4jH444A13S8dVxA8gI1IOMwu7u7EaPabuqyw5CX9NezdC7EzsKH569759A3b5vaLhZg3LounU5Tq6tJEjJV6sDAAEYHP6Hu0WqA8kS00aEZLlc3e/HuxVOUlM9EVVWV8mH8Gd9KlgdsHI2JrKKiApU1DUiseor08HRfEUomdHZ2YkbNfHWP8cGwT/Pwbta5E3oRt7yQ5/r7+5FMJtHU1OReZxKJBKLRKCorK9VTq+zSvgw8pwR563iCB4y5wQiZOVqH3t5eNc/GD8BZFQ6H/9oJxghyy0gp8QdFk5DY4EXJzgAAAABJRU5ErkJggg==',  # 普通火绒托盘图标base64
+        "dark_bg": b'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'   # 黑底火绒托盘图标base64
+    }
 }
+
 
 # 火绒深色和浅色主题的按钮
 b64_hr_buttons = {
@@ -29,6 +34,10 @@ b64_hr_buttons = {
 icon_hr = b'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'
 
 
+# --------------AV Icon(用在生成托盘图标)--------------
+icon_hr = b''
+
+
 # 在内存中处理图像
 def b64_to_image(b64_data):
     """将base64数据转换为内存中的图像对象"""
@@ -42,6 +51,26 @@ def detect_av():
         return 'hr'
     return None
 
+def open_system_tray():
+    """打开系统托盘"""
+    try:
+        # 方法1：直接点击托盘区域
+        screen_width, screen_height = pyautogui.size()
+        tray_x = screen_width - 50
+        tray_y = screen_height - 10
+        pyautogui.click(tray_x, tray_y)
+        sleep(0.5)
+        
+        # 方法2：如果方法1失败，尝试快捷键
+        pyautogui.hotkey('win', 'b')
+        sleep(0.3)
+        pyautogui.press('enter')
+        sleep(0.5)
+        
+        return True
+    except Exception as e:
+        print(f"打开系统托盘失败: {str(e)}")
+        return False
 
 def detect_theme(logout_img):
     """检测当前主题类型"""
@@ -70,24 +99,42 @@ def detect_theme(logout_img):
     return "light"
 
 
-def get_button_position(img_data, confidence=0.8, max_attempts=3):
-    """获取按钮位置（带智能重试机制）"""
+def get_button_position(img_data, button_type, max_attempts=3):
+    """获取按钮位置（带智能重试机制和类型化阈值）
+    
+    Args:
+        img_data: 图像数据
+        button_type: 按钮类型('logo', 'logout', 'confirm')
+        max_attempts: 最大尝试次数
+    """
     button_img = b64_to_image(img_data)
+    
+    # 根据按钮类型设置不同置信度和搜索区域
+    config = {
+        'logo': {'confidence': 0.65, 'region': 'tray'},
+        'logout': {'confidence': 0.85, 'region': 'screen'},
+        'confirm': {'confidence': 0.85, 'region': 'screen'}
+    }[button_type]
 
     for attempt in range(max_attempts):
         try:
-            # 限制搜索区域为屏幕右下角（托盘区域）
+            # 设置搜索区域
             screen_width, screen_height = pyautogui.size()
-            search_region = (
-                screen_width // 2,
-                screen_height // 2,
-                screen_width // 2,
-                screen_height // 2
-            )
+            if config['region'] == 'tray':
+                # 托盘区域 - 屏幕右下四分之一
+                search_region = (
+                    screen_width // 2,
+                    screen_height // 2,
+                    screen_width // 2,
+                    screen_height // 2
+                )
+            else:
+                # 全屏搜索
+                search_region = None
 
             pos = pyautogui.locateOnScreen(
                 button_img,
-                confidence=confidence,
+                confidence=config['confidence'],
                 region=search_region
             )
 
@@ -99,13 +146,13 @@ def get_button_position(img_data, confidence=0.8, max_attempts=3):
                 return (center.x + offset_x, center.y + offset_y)
 
         except Exception as e:
-            print(f"定位按钮失败(尝试 {attempt + 1}/{max_attempts}): {str(e)}")
+            print(f"定位{button_type}按钮失败(尝试 {attempt + 1}/{max_attempts}): {str(e)}")
 
         # 重试前短暂等待并轻微移动鼠标
         sleep(0.5)
         pyautogui.moveRel(10, 10)  # 小幅度移动鼠标刷新界面
 
-    print(f"无法定位按钮，已达到最大尝试次数 {max_attempts}")
+    print(f"无法定位{button_type}按钮，已达到最大尝试次数 {max_attempts}")
     return None
 
 
@@ -117,47 +164,40 @@ def kill_av():
         return False
 
     try:
-        # 获取logo图像
-        logo_img = b64_to_image(b64_AV_logo[AV])
-
-        # 打开系统托盘（增加操作间隔）
-        pyautogui.hotkey('win', 'b')
-        sleep(0.8)
-        pyautogui.press('enter')
-        sleep(1.5)  # 增加延迟确保托盘完全展开
-
-        # 定位并右键点击logo（带重试）
-        logo_pos = None
-        for attempt in range(3):
-            try:
-                logo_pos = get_button_position(b64_AV_logo[AV], confidence=0.65)
-                if logo_pos:
-                    pyautogui.rightClick(logo_pos)
-                    # 立即将鼠标移动到屏幕中心位置，避免悬停弹出版本信息
-                    screen_width, screen_height = pyautogui.size()
-                    pyautogui.moveTo(screen_width // 2, screen_height // 2)
-                    break
-            except:
-                sleep(0.5)
-                # 失败时尝试重新打开托盘
-                if attempt == 1:
-                    pyautogui.hotkey('win', 'b')
-                    sleep(0.5)
-                    pyautogui.press('enter')
-                    sleep(1.5)
-
-        if not logo_pos:
-            print("无法定位托盘图标")
+        # 1. 先打开系统托盘
+        if not open_system_tray():
+            print("无法打开系统托盘")
             return False
+
+        # 2. 等待托盘完全展开
+        sleep(1.5)
+
+        # 3. 尝试定位普通托盘图标
+        logo_pos = get_button_position(b64_AV_logo[AV]["normal"], 'logo')
+        
+        # 4. 如果找不到普通图标，尝试黑底图标
+        if not logo_pos:
+            print("尝试定位黑底托盘图标...")
+            logo_pos = get_button_position(b64_AV_logo[AV]["dark_bg"], 'logo')
+        
+        if not logo_pos:
+            print("无法定位任何托盘图标")
+            return False
+
+        # 5. 右键点击logo
+        pyautogui.rightClick(logo_pos)
+        # 立即将鼠标移动到屏幕中心位置，避免悬停弹出版本信息
+        screen_width, screen_height = pyautogui.size()
+        pyautogui.moveTo(screen_width // 2, screen_height // 2)
 
         sleep(1.5)  # 等待菜单弹出
 
-        # 检测当前主题
+        # 6. 检测当前主题
         light_logout_img = b64_to_image(b64_hr_buttons["light"]["logout"])
         theme = detect_theme(light_logout_img)
 
-        # 获取退出按钮位置（带重试）
-        logout_pos = get_button_position(b64_hr_buttons[theme]["logout"])
+        # 7. 获取退出按钮位置
+        logout_pos = get_button_position(b64_hr_buttons[theme]["logout"], 'logout')
         if not logout_pos:
             print("无法定位退出按钮")
             return False
@@ -165,8 +205,8 @@ def kill_av():
         pyautogui.click(logout_pos)
         sleep(1.5)  # 增加等待确保确认窗口弹出
 
-        # 获取确认按钮位置（带重试）
-        confirm_pos = get_button_position(b64_hr_buttons[theme]["confirm"])
+        # 8. 获取确认按钮位置
+        confirm_pos = get_button_position(b64_hr_buttons[theme]["confirm"], 'confirm')
         if not confirm_pos:
             print("无法定位确认按钮")
             return False
@@ -180,8 +220,5 @@ def kill_av():
         print(f"退出过程中出错: {str(e)}")
         return False
 
-
 if __name__ == '__main__':
-    import random
-
     kill_av()
